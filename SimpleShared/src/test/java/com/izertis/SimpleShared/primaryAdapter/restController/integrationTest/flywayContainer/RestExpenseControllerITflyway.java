@@ -4,10 +4,7 @@ import com.izertis.SimpleShared.primaryAdapter.request.ExpenseRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -56,6 +53,22 @@ public class RestExpenseControllerITflyway {
     }
 
     @Test
+    @Order(1)
+    public void shouldAddNewExpenseAndReturnStatus200(){
+        long id = 1;
+
+        given()
+                .contentType(ContentType.JSON)
+                .pathParam("id", id)
+                .body(new ExpenseRequest(10.00, "test"))
+                .when()
+                .post("/rest/expense/friend/{id}")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    @Order(2)
     public void shouldGetAllExpensesAndReturnStatus200() {
         given()
                 .contentType(ContentType.JSON)
@@ -63,47 +76,38 @@ public class RestExpenseControllerITflyway {
                 .get("/rest/expense")
                 .then()
                 .statusCode(200)
-                .body(".", hasSize(9));
+                .body(".", hasSize(10));
     }
 
-    /*@Test
-    public void shouldAddNewExpenseAndReturnStatus200(){
-        ExpenseRequest expenseRequest = new ExpenseRequest(10.00, "test");
-
-        given()
-                .contentType(ContentType.JSON)
-                .pathParam("id", 1)
-                .body(expenseRequest)
-                .when()
-                .post("/rest/expense/{id}")
-                .then()
-                .statusCode(200);
-    }*/
-
     @Test
+    @Order(3)
     public void shouldReturnFriendNotFoundExceptionWhenAddingNewExpenseForFriend() {
         ExpenseRequest expenseRequest = new ExpenseRequest(10.00, "test");
+        long id = 99;
 
         given()
                 .contentType(ContentType.JSON)
+                .pathParam("id", id)
                 .body(expenseRequest)
                 .when()
-                .post("/rest/expense/99")
+                .post("/rest/expense/friend/{id}")
                 .then()
                 .statusCode(404);
 
     }
 
-   /* @Test
+    @Test
+    @Order(4)
     public void shouldReturnNegativeExpenseAmountExceptionWhenAmountIsNegative() {
-        ExpenseRequest expenseRequest = new ExpenseRequest(-10.00, "test");
+        long id = 1;
 
         given()
                 .contentType(ContentType.JSON)
-                .body(expenseRequest)
+                .pathParam("id", id)
+                .body(new ExpenseRequest(-10.00, "test"))
                 .when()
-                .post("/rest/expense/1")
+                .post("/rest/expense/friend/{id}")
                 .then()
                 .statusCode(400);
-    }*/
+    }
 }

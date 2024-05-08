@@ -1,6 +1,7 @@
 package com.izertis.SimpleShared.primaryAdapter.restController.integrationTest.flywayContainer;
 
 import com.izertis.SimpleShared.core.domain.Friend;
+import com.izertis.SimpleShared.primaryAdapter.request.FriendRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.mapper.ObjectMapperType;
@@ -114,17 +115,21 @@ public class RestFriendControllerITflyway {
                 .body("name", equalTo("test"));
     }
 
-    /*@Test
-    @Order(5)
-    public void shouldSaveNewFriendAndReturnStatus200(){
+    @Test
+
+    @Order
+            (5)
+    public void
+    shouldSaveNewFriendAndReturnStatus200
+            (){
         String name = "test";
-       given()
+
+        given()
                 .contentType(ContentType.JSON)
-                .body(name)
+                .body(new FriendRequest(1, name))
                 .when()
-                .post("/rest/friend/")
+                .post("/rest/friend")
                 .then()
                 .statusCode(200);
-    }*/
-
+    }
 }
